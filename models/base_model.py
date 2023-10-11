@@ -1,5 +1,7 @@
 import uuid
 from datetime import datetime
+import models
+from models.engine import storage
 
 
 class BaseModel:
@@ -33,7 +35,22 @@ class BaseModel:
         Returns:
                 None
         """
+        # def __str___(self):
+        #     myclass = self.__class__.__name__
+        #     object_id = self.id
+        #     attr = self.__dict__
+        #     return f"[{Class}] ({object_id}) {attr}"
+
         self.created_at = datetime.today()
         self.updated_at = datetime.today()
         self.id = str(uuid.uuid4())
-        # TODO convert datetime to iso format
+
+        def save(self):
+            self.updated_at = datetime()
+            storage.save()
+
+        def to_dict(self):
+            self.__dict__.copy()
+
+        def __str__(self):
+            return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
