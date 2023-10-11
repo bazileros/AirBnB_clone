@@ -1,6 +1,8 @@
 import uuid
 from datetime import datetime
 import models
+from models import Storage
+
 
 
 class BaseModel:
@@ -11,7 +13,7 @@ class BaseModel:
         self (BaseModel): The current instance.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *extra_args, **extra_kwargs):
         """
         Initializes a new instance of the BaseModel class.
 
@@ -34,26 +36,36 @@ class BaseModel:
         Returns:
                 None
         """
-        # def __str___(self):
-        #     myclass = self.__class__.__name__
-        #     object_id = self.id
-        #     attr = self.__dict__
-        #     return f"[{Class}] ({object_id}) {attr}"
-
+      
         self.id = str(uuid.uuid4())
         self.created_at = datetime.today()
         self.updated_at = datetime.today()
-        if len(**kwargs):
-            iso_format = "%Y-%m-%dT%H:%M:%S.%f"
-            for key, value in kwargs.items():
-                        if key in ["created_at"], ["updated_at"]:
-                                self.__dict__[key] = datetime.strip(key, value)
-            
+        default_datetime_value = datetime.today()
+
+        iso_format = "%Y-%m-%dT%H:%M:%S.%f"
+        for key, value in extra_kwargs.items():
+            if key in ["created_at", "update_at"]:
+                try:
+                    setattr(self, key, datetime.strptime(value, iso_format))
+                except ValueError:
+                    # Handle the invalid datetime format gracefully (e.g., log an error or assign a default value).
+                    print(f"Warning: Invalid datetime format for key '{key}' - Using a default value.")
+                    # Assign a default datetime value or take appropriate action.
+                    setattr(self, key, default_datetime_value)
+            else:
+                setattr(self, key, value)
+
+        if not extra_kwargs:
+            models.storage.new(self)
+
 
 
         def save(self):
-            self.updated_at = datetime.today()
-            models.storage.save()
+            try:
+                self.updated_at = datetime.today()
+                models.storage.save()
+            except Exception as e:
+                print(f"An error occurred while saving: {e}")
 
 
         def to_dict(self):
@@ -63,30 +75,10 @@ class BaseModel:
                 "created_at": self.created_at.isoformat(),
                 "updated_at": self.updated_at.isoformat(),
             }
-            result.update(self._dict_)  # Add instance attributes
+            result.update(self.__dict__)  # Add instance attributes
             return result
         
 
         def __str__(self):
             return f"[{self.__class__.__name}] ({self.id}) {self.__dict}"
-# TODO refactor this code into our implementation
-from datetime import datetime
 
-class BaseModel:
-    def __init__(self, *args, **kwargs):
-        # Initialize created_at and updated_at with current timestamps
-        self.created_at = datetime.today()
-        self.updated_at = datetime.today()
-        
-        # If 'created_at' or 'updated_at' are provided in kwargs, update the attributes
-        if 'created_at' in kwargs:
-            self.created_at = datetime.strptime(kwargs['created_at'], "%Y-%m-%dT%H:%M:%S.%f")
-        if 'updated_at' in kwargs:
-            self.updated_at = datetime.strptime(kwargs['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
-        
-        # You can remove other items from kwargs here if needed
-        # kwargs.pop('created_at', None)
-        # kwargs.pop('updated_at', None)
-        
-        # Store any remaining attributes in the instance
-        self.__dict__.update(kwargs)
