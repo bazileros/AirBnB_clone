@@ -55,8 +55,8 @@ class BaseModel:
         result = {
             "_class": self.__class__.__name__,
             "id": self.id,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
         result.update(self.__dict__)  # Add instance attributes
         return result
