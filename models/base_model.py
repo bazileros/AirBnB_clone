@@ -8,11 +8,13 @@ class BaseModel:
     """
 
     def __init__(self, *extra_args, **extra_kwargs):
-        """
-        Initializes a new instance of the BaseModel class.
-        This constructor initializes the common attributes for all derived
-        classes. If keyword arguments are provided, it populates the instance's
-        attributes based on the key-value pairs in kwargs.
+        """ Initialize the BaseModel class
+
+        Args: 
+            self (BaseModel): the current instance
+            extra_args (any): not used here
+            extra_kwargs (dict): dictionary of key/value pair attributes
+        
         """
 
         self.id = str(uuid.uuid4())
@@ -34,7 +36,7 @@ class BaseModel:
                 setattr(self, key, value)
 
         if not extra_kwargs:
-            models.storage.new(self)
+            models.storage.new(self) 
 
     def save(self):
         """
