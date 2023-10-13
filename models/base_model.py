@@ -51,20 +51,29 @@ class BaseModel:
         except Exception as e:
             print(f"An error occurred while saving: {e}")
 
+    # def to_dict(self):
+    #     """
+    #     Converts the instance to a dictionary representation.
+    #     Returns:
+    #         dict: A dictionary representation of the instance.
+    #     """
+    #     result = {
+    #         "_class": self.__class__.__name__,
+    #         "id": self.id,
+    #         "created_at": self.created_at,
+    #         "updated_at": self.updated_at,
+    #     }
+    #     result.update(self.__dict__)  # Add instance attributes
+    #     return result
     def to_dict(self):
-        """
-        Converts the instance to a dictionary representation.
-        Returns:
-            dict: A dictionary representation of the instance.
-        """
-        result = {
-            "_class": self.__class__.__name__,
-            "id": self.id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-        }
-        result.update(self.__dict__)  # Add instance attributes
-        return result
+        """Returns a dictionary containing all \
+            keys/values of __dict__ of the instance."""
+        dict_copy = self.__dict__.copy()
+        dict_copy["created_at"] = self.created_at
+        dict_copy["updated_at"] = self.updated_at
+        dict_copy["__class__"] = self.__class__.__name__
+
+        return dict_copy
 
     def __str__(self):
         """
