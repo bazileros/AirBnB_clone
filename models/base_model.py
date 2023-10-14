@@ -25,22 +25,30 @@ class BaseModel:
         default_datetime_value = datetime.today()
         iso_format = "%Y-%m-%dT%H:%M:%S.%f"
 
-        for key, value in extra_kwargs.items():
-            if key in ["created_at", "update_at"]:
-                try:
-                    setattr(self, key, datetime.strptime(value, iso_format))
-                except ValueError:
-                    # Handle the invalid datetime format gracefully (e.g., log an error or assign a default value).
-                    print(
-                        f"Warning: Invalid datetime format for key '{key}' - Using a default value."
+        if extra_kwargs:
+            for key, value in extra_kwargs.items():
+                if key == "__class__":
+                    self.__class__.__name__ = value
+                elif key == "created_at":
+                    self.created_at = datetime.datetime.strptime(
+                        value, "%Y-%m-%dT%H:%M:%S.%f"
                     )
-                    # Assign a default datetime value or take appropriate action.
-                    setattr(self, key, default_datetime_value)
-            else:
-                setattr(self, key, value)
-
-        if not extra_kwargs:
+                elif key == "updated_at":
+                    self.updated_at = datetime.datetime.strptime(
+                        value, "%Y-%m-%dT%H:%M:%S.%f"
+                    )
+                else:
+                    setattr(self, key, value)
+        else:
             models.storage.new(self)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+        Returns:
+            str: The string representation of the class.
+        """
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """
@@ -48,6 +56,7 @@ class BaseModel:
         """
         try:
             self.updated_at = datetime.today()
+            models.storage.new(self)
             models.storage.save()
         except Exception as e:
             print(f"An error occurred while saving: {e}")
@@ -66,20 +75,30 @@ class BaseModel:
     #     }
     #     result.update(self.__dict__)  # Add instance attributes
     #     return result
+    # def to_dict(self):
+    #     """Returns a dictionary containing all \
+    #         keys/values of __dict__ of the instance."""
+    #     dict_copy = self.__dict__.copy()
+    #     dict_copy["created_at"] = self.created_at
+    #     dict_copy["updated_at"] = self.updated_at
+    #     dict_copy["__class__"] = self.__class__.__name__
+
+    #     return dict_copy
+
     def to_dict(self):
-        """Returns a dictionary containing all \
-            keys/values of __dict__ of the instance."""
-        dict_copy = self.__dict__.copy()
-        dict_copy["created_at"] = self.created_at
-        dict_copy["updated_at"] = self.updated_at
-        dict_copy["__class__"] = self.__class__.__name__
-
-        return dict_copy
-
-    def __str__(self):
         """
-        Returns the string representation of the class.
-        Returns:
-            str: The string representation of the class.
+        returns a dictionary containing all keys/values of __dict__ of the instance
         """
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+        # return {
+        #     **self.__dict__,
+        #     '__class__': self.__class__.__name__,
+
+        # }
+        dict_array = {}
+        for key, value in self.__dict__.items():
+            if key != "created_at" and key != "updated_at":
+                dict_array[key] = value
+        dict_array["__class__"] = self.__class__.__name__
+        dict_array["created_at"] = self.created_at.isoformat()
+        dict_array["updated_at"] = self.updated_at.isoformat()
+        return dict_array
