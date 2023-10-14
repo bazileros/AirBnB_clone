@@ -87,7 +87,8 @@ class BaseModel:
 
     def to_dict(self):
         """
-        returns a dictionary containing all keys/values of __dict__ of the instance
+        returns a dictionary containing all keys/values of __dict__
+          of the instance
         """
         # return {
         #     **self.__dict__,
