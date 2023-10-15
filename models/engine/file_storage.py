@@ -66,7 +66,26 @@ class FileStorage:
             json.dump(json_dict, f, indent=4)
 
     def classes(self):
-        """Returns a dictionary of valid classes and their references."""
+        """
+        Retrieve a dictionary of valid classes and their corresponding references.
+
+        This method returns a dictionary that maps class names to their associated class references.
+        It provides a comprehensive reference to the valid classes available in the application.
+
+        Args:
+            self: An instance of the class containing the 'classes' method.
+
+        Returns:
+            dict: A dictionary containing class names as keys and their corresponding class references.
+
+        Example:
+            # Retrieve the dictionary of valid classes and their references
+            classes_dict = classes_instance.classes()
+
+        Note:
+        The returned dictionary simplifies the process of obtaining references to the valid classes
+        used in the application, making it easier to work with and manipulate the classes programmatically.
+    """
         from models.base_model import BaseModel
         from models.user import User
         from models.state import State
