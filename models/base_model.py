@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import uuid
 from datetime import datetime
-import models
+from models import storage
 
 
 class BaseModel:
@@ -9,38 +9,29 @@ class BaseModel:
     Represents a base model with common attributes and methods.
     """
 
-    def __init__(self, *extra_args, **extra_kwargs):
-        """Initialize the BaseModel class
+    def __init__(self, *args, **kwargs):
+        """Initialization of a Base instance.
 
         Args:
-            self (BaseModel): the current instance
-            extra_args (any): not used here
-            extra_kwargs (dict): dictionary of key/value pair attributes
-
+            - *args: list of arguments
+            - **kwargs: dict of key-values arguments
         """
 
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.today()
-        self.updated_at = datetime.today()
-        default_datetime_value = datetime.today()
-        iso_format = "%Y-%m-%dT%H:%M:%S.%f"
-
-        if extra_kwargs:
-            for key, value in extra_kwargs.items():
-                if key == "__class__":
-                    self.__class__.__name__ = value
-                elif key == "created_at":
-                    self.created_at = datetime.datetime.strptime(
-                        value, "%Y-%m-%dT%H:%M:%S.%f"
-                    )
+        if kwargs is not None and kwargs != {}:
+            for key in kwargs:
+                if key == "created_at":
+                    self.__dict__["created_at"] = datetime.strptime(
+                        kwargs["created_at"], "%Y-%m-%dT%H:%M:%S.%f")
                 elif key == "updated_at":
-                    self.updated_at = datetime.datetime.strptime(
-                        value, "%Y-%m-%dT%H:%M:%S.%f"
-                    )
+                    self.__dict__["updated_at"] = datetime.strptime(
+                        kwargs["updated_at"], "%Y-%m-%dT%H:%M:%S.%f")
                 else:
-                    setattr(self, key, value)
+                    self.__dict__[key] = kwargs[key]
         else:
-            models.storage.new(self)
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            storage.new(self)
 
     def __str__(self):
         """
@@ -49,57 +40,24 @@ class BaseModel:
             str: The string representation of the class.
         """
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+    
 
     def save(self):
         """
         Saves the instance and updates the `updated_at` attribute.
         """
-        try:
-            self.updated_at = datetime.today()
-            models.storage.new(self)
-            models.storage.save()
-        except Exception as e:
-            print(f"An error occurred while saving: {e}")
+        self.updated_at = datetime.now()
+        storage.save()
+       
 
-    # def to_dict(self):
-    #     """
-    #     Converts the instance to a dictionary representation.
-    #     Returns:
-    #         dict: A dictionary representation of the instance.
-    #     """
-    #     result = {
-    #         "_class": self.__class__.__name__,
-    #         "id": self.id,
-    #         "created_at": self.created_at,
-    #         "updated_at": self.updated_at,
-    #     }
-    #     result.update(self.__dict__)  # Add instance attributes
-    #     return result
-    # def to_dict(self):
-    #     """Returns a dictionary containing all \
-    #         keys/values of __dict__ of the instance."""
-    #     dict_copy = self.__dict__.copy()
-    #     dict_copy["created_at"] = self.created_at
-    #     dict_copy["updated_at"] = self.updated_at
-    #     dict_copy["__class__"] = self.__class__.__name__
-
-    #     return dict_copy
 
     def to_dict(self):
         """
         returns a dictionary containing all keys/values of __dict__
           of the instance
         """
-        # return {
-        #     **self.__dict__,
-        #     '__class__': self.__class__.__name__,
-
-        # }
-        dict_array = {}
-        for key, value in self.__dict__.items():
-            if key != "created_at" and key != "updated_at":
-                dict_array[key] = value
-        dict_array["__class__"] = self.__class__.__name__
-        dict_array["created_at"] = self.created_at.isoformat()
-        dict_array["updated_at"] = self.updated_at.isoformat()
-        return dict_array
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = type(self).__name__
+        my_dict["created_at"] = my_dict["created_at"].isoformat()
+        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
+        return my_dict

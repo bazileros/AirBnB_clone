@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+""" Module for Storage auto __init__"""
 from models.engine.file_storage import FileStorage
 
 storage = FileStorage()

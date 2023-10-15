@@ -12,21 +12,58 @@ class FileStorage:
     __objects = {}
 
     def all(self):
-        """Returns __objects dictionary."""
-        # TODO: should this be a copy()?
+        """
+        Returns the dictionary of objects stored in the FileStorage instance.
+
+        This method retrieves the dictionary containing all objects currently managed by
+        the FileStorage class instance. The dictionary is structured with unique keys
+        corresponding to the object types and IDs.
+
+        Args:
+            self: An instance of the FileStorage class.
+
+        Returns:
+            dict: A dictionary of objects in the format {key: object}.
+
+    """
         return FileStorage.__objects
 
     def new(self, obj):
-        """Sets new obj in __objects dictionary."""
-        # TODO: should these be more precise specifiers?
+        """
+        Add a new object to the FileStorage instance.
+
+        This method adds a new object to the list of objects managed by the FileStorage class
+        instance. The object is identified by its type and ID, and it is stored in the
+        `__objects` dictionary.
+
+        Args:
+            self: An instance of the FileStorage class.
+            obj: The object to be added.
+
+        Returns:
+            None
+        """
         key = "{}.{}".format(type(obj).__name__, obj.id)
         FileStorage.__objects[key] = obj
 
     def save(self):
-        """Serialzes __objects to JSON file."""
+        """
+        Serialize the `__objects` dictionary to a JSON file.
+
+        This method is responsible for saving the current state of the objects managed by the
+        FileStorage class into a JSON file. It opens the specified file path, serializes the
+        objects into a JSON format, and writes the data to the file.
+
+        Args:
+            self: An instance of the FileStorage class.
+
+        Returns:
+            None
+
+        """
         with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
             json_dict = {key: value.to_dict() for key, value in FileStorage.__objects.items()}
-            json.dump(json_dict, f)
+            json.dump(json_dict, f, indent=4)
 
     def classes(self):
         """Returns a dictionary of valid classes and their references."""
@@ -48,18 +85,44 @@ class FileStorage:
         return classes
 
     def reload(self):
-        """Deserializes JSON file into __objects."""
+        """
+        Deserialize a JSON file and load its contents into the __objects dictionary.
+
+        This method is responsible for deserializing a JSON file and loading its contents into
+        the '__objects' dictionary of the FileStorage class. The JSON file is specified by the
+        `__file_path` attribute of the FileStorage class.
+
+        Args:
+            self: An instance of the FileStorage class.
+
+        Returns:
+            None
+        """
         if not os.path.isfile(FileStorage.__file_path):
             return
         with open(FileStorage.__file_path, "r", encoding="utf-8") as f:
             obj_dict = json.load(f)
             obj_dict = {key: self.classes()[value["__class__"]](**value)
                         for key, value in obj_dict.items()}
-            # TODO: should this overwrite or insert?
+
             FileStorage.__objects = obj_dict
 
     def attributes(self):
-        """Returns the valid attributes and their types for classname."""
+        """
+        Retrieve the valid attributes and their types for each class in the application.
+
+        This method returns a dictionary that specifies the valid attributes and their associated
+        data types for each class used in the application. It provides a structured overview of
+        the expected attributes for each class, making it a valuable reference for developers.
+
+        Args:
+            self: An instance of the class containing the 'attributes' method.
+
+        Returns:
+            dict: A dictionary containing class names as keys and a sub-dictionary as values.
+                The sub-dictionary contains attribute names as keys and their corresponding data types.
+
+        """
         attributes = {
             "BaseModel":
                      {"id": str,
