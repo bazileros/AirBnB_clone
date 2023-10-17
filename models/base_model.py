@@ -40,7 +40,6 @@ class BaseModel:
             str: The string representation of the class.
         """
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
-    
 
     def save(self):
         """
@@ -48,8 +47,6 @@ class BaseModel:
         """
         self.updated_at = datetime.now()
         storage.save()
-       
-
 
     def to_dict(self):
         """

@@ -15,8 +15,10 @@ class FileStorage:
         """
         Returns the dictionary of objects stored in the FileStorage instance.
 
-        This method retrieves the dictionary containing all objects currently managed by
-        the FileStorage class instance. The dictionary is structured with unique keys
+        This method retrieves the dictionary containing all objects currently
+        managed by
+        the FileStorage class instance. The dictionary is structured with
+        unique keys
         corresponding to the object types and IDs.
 
         Args:
@@ -32,8 +34,10 @@ class FileStorage:
         """
         Add a new object to the FileStorage instance.
 
-        This method adds a new object to the list of objects managed by the FileStorage class
-        instance. The object is identified by its type and ID, and it is stored in the
+        This method adds a new object to the list of objects managed by the
+        FileStorage class
+        instance. The object is identified by its type and ID, and it is stored
+        in the
         `__objects` dictionary.
 
         Args:
@@ -50,8 +54,10 @@ class FileStorage:
         """
         Serialize the `__objects` dictionary to a JSON file.
 
-        This method is responsible for saving the current state of the objects managed by the
-        FileStorage class into a JSON file. It opens the specified file path, serializes the
+        This method is responsible for saving the current state of the objects
+        managed by the
+        FileStorage class into a JSON file. It opens the specified file path,
+        serializes the
         objects into a JSON format, and writes the data to the file.
 
         Args:
@@ -62,29 +68,37 @@ class FileStorage:
 
         """
         with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
-            json_dict = {key: value.to_dict() for key, value in FileStorage.__objects.items()}
+            json_dict = {key: value.to_dict()
+                         for key, value in FileStorage.__objects.items()}
             json.dump(json_dict, f, indent=4)
 
     def classes(self):
         """
-        Retrieve a dictionary of valid classes and their corresponding references.
+        Retrieve a dictionary of valid classes and their corresponding
+        references.
 
-        This method returns a dictionary that maps class names to their associated class references.
-        It provides a comprehensive reference to the valid classes available in the application.
+        This method returns a dictionary that maps class names to their
+        associated class references.
+        It provides a comprehensive reference to the valid classes available in
+        the application.
 
         Args:
             self: An instance of the class containing the 'classes' method.
 
         Returns:
-            dict: A dictionary containing class names as keys and their corresponding class references.
+            dict: A dictionary containing class names as keys and their
+            corresponding class references.
 
         Example:
             # Retrieve the dictionary of valid classes and their references
             classes_dict = classes_instance.classes()
 
         Note:
-        The returned dictionary simplifies the process of obtaining references to the valid classes
-        used in the application, making it easier to work with and manipulate the classes programmatically.
+        The returned dictionary simplifies the process of obtaining references
+        to the valid classes
+        used in the application, making it easier to work with and manipulate
+        the
+        classes programmatically.
     """
         from models.base_model import BaseModel
         from models.user import User
@@ -105,10 +119,13 @@ class FileStorage:
 
     def reload(self):
         """
-        Deserialize a JSON file and load its contents into the __objects dictionary.
+        Deserialize a JSON file and load its contents into the
+        __objects__init__.py dictionary.
 
-        This method is responsible for deserializing a JSON file and loading its contents into
-        the '__objects' dictionary of the FileStorage class. The JSON file is specified by the
+        This method is responsible for deserializing a JSON file and loading
+        its contents into
+        the '__objects' dictionary of the FileStorage class. The JSON file is
+        specified by the
         `__file_path` attribute of the FileStorage class.
 
         Args:
@@ -128,18 +145,24 @@ class FileStorage:
 
     def attributes(self):
         """
-        Retrieve the valid attributes and their types for each class in the application.
+        Retrieve the valid attributes and their types for each class in the
+        application.
 
-        This method returns a dictionary that specifies the valid attributes and their associated
-        data types for each class used in the application. It provides a structured overview of
-        the expected attributes for each class, making it a valuable reference for developers.
+        This method returns a dictionary that specifies the valid attributes
+        and their associated
+        data types for each class used in the application. It provides a
+        structured overview of
+        the expected attributes for each class, making it a valuable reference
+        for developers.
 
         Args:
             self: An instance of the class containing the 'attributes' method.
 
         Returns:
-            dict: A dictionary containing class names as keys and a sub-dictionary as values.
-                The sub-dictionary contains attribute names as keys and their corresponding data types.
+            dict: A dictionary containing class names as keys and a
+            sub-dictionary as values.
+                The sub-dictionary contains attribute names as keys and their
+                corresponding data types.
 
         """
         attributes = {
